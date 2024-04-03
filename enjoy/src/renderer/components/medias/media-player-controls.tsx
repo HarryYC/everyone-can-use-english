@@ -372,7 +372,7 @@ export const MediaPlayerControls = () => {
   }, [wavesurfer, decoded, playMode, activeRegion, currentTime]);
 
   useHotkeys(
-    ["Space", "p", "n", "r"],
+    ["Space", "p", "n", "r", "c"],
     (keyboardEvent, hotkeyEvent) => {
       if (!wavesurfer) return;
       keyboardEvent.preventDefault();
