@@ -390,6 +390,9 @@ export const MediaPlayerControls = () => {
         case "r":
           document.getElementById("media-record-button").click();
           break;
+        case "c":
+          document.getElementById("media-compare-button").click();
+          break;
       }
     },
     [wavesurfer]
@@ -481,10 +484,11 @@ export const MediaPlayerControls = () => {
               {PLAYBACK_RATE_OPTIONS.map((rate, i) => (
                 <div
                   key={i}
-                  className={`cursor-pointer h-10 w-10 leading-10 rounded-full flex items-center justify-center ${rate === playbackRate
-                    ? "bg-primary text-white text-md"
-                    : "text-black/70 text-xs"
-                    }`}
+                  className={`cursor-pointer h-10 w-10 leading-10 rounded-full flex items-center justify-center ${
+                    rate === playbackRate
+                      ? "bg-primary text-white text-md"
+                      : "text-black/70 text-xs"
+                  }`}
                   onClick={() => {
                     setPlaybackRate(rate);
                   }}
