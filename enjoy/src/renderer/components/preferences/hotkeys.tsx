@@ -1,13 +1,33 @@
 import { t } from "i18next";
-import { Button, Separator, toast } from "@renderer/components/ui";
+import { Button, Input, Separator, toast } from "@renderer/components/ui";
 import { useContext, useState, useEffect } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
+import { KeyboardInputEvent } from "electron";
+import { set } from "lodash";
 
 export const Hotkeys = () => {
   const [editing, setEditing] = useState(false);
+  const [hotkeys, setHotkeys] = useState<Array<KeyboardEvent>>([]);
   const { libraryPath, EnjoyApp } = useContext(AppSettingsProviderContext);
 
-  const commandOrCtrl = navigator.platform.includes("Mac") ? "Cmd" : "Ctrl";
+  const commandOrCtrl = navigator.userAgent.includes("Mac") ? "Cmd" : "Ctrl";
+
+  const systemHotkeys = [];
+
+  const playerHotkeys = [];
+
+  useEffect(() => {
+    const handleKeyboardEvent = (event: KeyboardEvent) => {
+      // Handle the keyboard event here
+      setHotkeys((prev) => [...prev, event]);
+    };
+
+    window.addEventListener("keydown", handleKeyboardEvent);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyboardEvent);
+    };
+  }, []);
 
   return (
     <>
@@ -81,7 +101,10 @@ export const Hotkeys = () => {
 
         <Separator />
 
-        <div className="flex items-center justify-between py-4">
+        <div
+          className="flex items-center justify-between py-4"
+          onDoubleClick={() => console.log(123)}
+        >
           <div className="flex items-center space-x-2 capitalize">
             {t("playNextSegment")}
           </div>
@@ -92,13 +115,46 @@ export const Hotkeys = () => {
 
         <Separator />
 
-        <div className="flex items-center justify-between py-4">
+        <div
+          className="flex items-center justify-between py-4"
+          onDoubleClick={() => {
+            setEditing(!editing);
+          }}
+        >
           <div className="flex items-center space-x-2 capitalize">
             {t("compare")}
           </div>
-          <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground">
-            c
-          </kbd>
+          {(editing && (
+            <>
+              <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground mr-4">
+                {(hotkeys && hotkeys.map((key) => key.key).join(" + ")) ||
+                  "Press keys to set hotkey"}
+              </kbd>
+              <div className="flex items-center space-x-2 justify-end">
+                <Button
+                  variant="secondary"
+                  onClick={(e) => {
+                    setEditing(!editing);
+                    e.preventDefault();
+                  }}
+                  size="sm"
+                >
+                  {t("cancel")}
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={() => setEditing(!editing)}
+                  size="sm"
+                >
+                  {t("save")}
+                </Button>
+              </div>
+            </>
+          )) || (
+            <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground mr-4">
+              {hotkeys.map((key) => key.key).join(" + ")}
+            </kbd>
+          )}
         </div>
 
         <Separator />
@@ -107,10 +163,7 @@ export const Hotkeys = () => {
           size="sm"
           onClick={() => {
             console.log("aaa");
-            EnjoyApp.settings.setHotKeys({
-              name: "PlayOrPause",
-              key: "Space",
-            });
+            setHotkeys([]);
           }}
         >
           aaa
