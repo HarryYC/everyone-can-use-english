@@ -172,6 +172,12 @@ contextBridge.exposeInMainWorld("__ENJOY_APP__", {
     switchLanguage: (language: string) => {
       return ipcRenderer.invoke("settings-switch-language", language);
     },
+    getHotKeys: () => {
+      return ipcRenderer.invoke("settings-get-hot-keys");
+    },
+    setHotKeys: (config: HotKeysConfigType) => {
+      return ipcRenderer.invoke("settings-set-hot-keys", config);
+    },
   },
   path: {
     join: (...paths: string[]) => {

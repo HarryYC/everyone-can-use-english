@@ -152,6 +152,18 @@ export default {
     ipcMain.handle("settings-set-default-engine", (_event, engine) => {
       return settings.setSync("defaultEngine", engine);
     });
+    ipcMain.handle("settings-get-hot-keys", (_event) => {
+      return settings.getSync("hotKeys");
+    });
+    ipcMain.handle("settings-set-hot-keys", (_event, hotKeys) => {
+      console.log(11111111111111111);
+      settings.setSync("hotKeys", {
+        name: "PlayOrPause",
+        key: "Space",
+      });
+      const hotKeyst = settings.getSync("hotKeys");
+      console.log(hotKeyst);
+    });
   },
   cachePath,
   libraryPath,

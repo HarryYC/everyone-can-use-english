@@ -104,6 +104,8 @@ type EnjoyAppType = {
     ) => Promise<void>;
     getLanguage: () => Promise<string>;
     switchLanguage: (language: string) => Promise<void>;
+    getHotKeys: () => Promise<HotKeysConfigType>;
+    setHotKeys: (hotkeys: HotKeysConfigType) => Promise<void>;
   };
   fs: {
     ensureDir: (path: string) => Promise<boolean>;

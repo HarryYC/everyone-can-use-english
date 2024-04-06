@@ -161,3 +161,8 @@ type YoutubeVideoType = {
   videoId: string;
   duration: string;
 };
+
+type HotKeysConfigType = {
+  name?: "PlayOrPause" | "StartOrStopRecording";
+  key?: string;
+};

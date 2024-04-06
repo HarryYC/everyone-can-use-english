@@ -3,6 +3,8 @@ import { WEB_API_URL } from "@/constants";
 import { Client } from "@/api";
 import i18n from "@renderer/i18n";
 import ahoy from "ahoy.js";
+import { get } from "lodash";
+import Logger from "electron-log";
 
 type AppSettingsProviderState = {
   webApi: Client;
@@ -19,6 +21,8 @@ type AppSettingsProviderState = {
   switchLanguage?: (language: "en" | "zh-CN") => void;
   proxy?: ProxyConfigType;
   setProxy?: (config: ProxyConfigType) => Promise<void>;
+  hotKey?: HotKeysConfigType;
+  setHotKeys?: (config: HotKeysConfigType) => Promise<void>;
   ahoy?: typeof ahoy;
 };
 
@@ -43,6 +47,7 @@ export const AppSettingsProvider = ({
   const [libraryPath, setLibraryPath] = useState("");
   const [language, setLanguage] = useState<"en" | "zh-CN">();
   const [proxy, setProxy] = useState<ProxyConfigType>();
+  const [hotKey, setHotKeys] = useState<HotKeysConfigType>();
   const EnjoyApp = window.__ENJOY_APP__;
 
   useEffect(() => {
@@ -51,6 +56,7 @@ export const AppSettingsProvider = ({
     fetchLibraryPath();
     fetchLanguage();
     fetchProxyConfig();
+    fetchHotKeysConfig();
   }, []);
 
   useEffect(() => {
@@ -143,6 +149,18 @@ export const AppSettingsProvider = ({
     });
   };
 
+  const fetchHotKeysConfig = async () => {
+    const config = await EnjoyApp.settings.getHotKeys();
+    setHotKeys(config);
+  };
+
+  const setHotKeysConfigHandler = async (config: HotKeysConfigType) => {
+    Logger.info("setHotKeysConfigHandler", config);
+    console.log("bbbbbbbb");
+    await EnjoyApp.settings.setHotKeys(config);
+    setHotKeys(config);
+  };
+
   return (
     <AppSettingsProviderContext.Provider
       value={{
@@ -159,6 +177,7 @@ export const AppSettingsProvider = ({
         setLibraryPath: setLibraryPathHandler,
         proxy,
         setProxy: setProxyConfigHandler,
+        setHotKeys: setHotKeysConfigHandler,
         initialized: Boolean(user && libraryPath),
         ahoy,
       }}

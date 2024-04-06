@@ -1,7 +1,12 @@
 import { t } from "i18next";
-import { Separator } from "@renderer/components/ui";
+import { Button, Separator, toast } from "@renderer/components/ui";
+import { useContext, useState, useEffect } from "react";
+import { AppSettingsProviderContext } from "@renderer/context";
 
 export const Hotkeys = () => {
+  const [editing, setEditing] = useState(false);
+  const { libraryPath, EnjoyApp } = useContext(AppSettingsProviderContext);
+
   const commandOrCtrl = navigator.platform.includes("Mac") ? "Cmd" : "Ctrl";
 
   return (
@@ -97,8 +102,22 @@ export const Hotkeys = () => {
         </div>
 
         <Separator />
-
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => {
+            console.log("aaa");
+            EnjoyApp.settings.setHotKeys({
+              name: "PlayOrPause",
+              key: "Space",
+            });
+          }}
+        >
+          aaa
+        </Button>
       </div>
     </>
   );
 };
+
+// add a button, set hotkeys to settings, need enjoy.setting.setHotKeys
