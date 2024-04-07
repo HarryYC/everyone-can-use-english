@@ -21,7 +21,7 @@ type AppSettingsProviderState = {
   switchLanguage?: (language: "en" | "zh-CN") => void;
   proxy?: ProxyConfigType;
   setProxy?: (config: ProxyConfigType) => Promise<void>;
-  hotKey?: HotKeysConfigType;
+  hotKeys?: HotKeysConfigType;
   setHotKeys?: (config: HotKeysConfigType) => Promise<void>;
   ahoy?: typeof ahoy;
 };
@@ -47,7 +47,7 @@ export const AppSettingsProvider = ({
   const [libraryPath, setLibraryPath] = useState("");
   const [language, setLanguage] = useState<"en" | "zh-CN">();
   const [proxy, setProxy] = useState<ProxyConfigType>();
-  const [hotKey, setHotKeys] = useState<HotKeysConfigType>();
+  const [hotKeys, setHotKeys] = useState<HotKeysConfigType>();
   const EnjoyApp = window.__ENJOY_APP__;
 
   useEffect(() => {
@@ -177,6 +177,7 @@ export const AppSettingsProvider = ({
         setLibraryPath: setLibraryPathHandler,
         proxy,
         setProxy: setProxyConfigHandler,
+        hotKeys,
         setHotKeys: setHotKeysConfigHandler,
         initialized: Boolean(user && libraryPath),
         ahoy,

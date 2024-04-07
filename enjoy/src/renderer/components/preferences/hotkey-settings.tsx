@@ -4,35 +4,37 @@ import { useContext, useState, useEffect } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { KeyboardInputEvent } from "electron";
 import { set } from "lodash";
+import { log } from "console";
 
-export const Hotkeys = () => {
+export const HotKeySettings = () => {
   const [editing, setEditing] = useState(false);
-  const [hotkeys, setHotkeys] = useState<Array<KeyboardEvent>>([]);
-  const { libraryPath, EnjoyApp } = useContext(AppSettingsProviderContext);
+  const [hotKey, setHotKey] = useState<Array<KeyboardEvent>>([]);
+  const { hotKeys, setHotKeys } = useContext(AppSettingsProviderContext);
 
   const commandOrCtrl = navigator.userAgent.includes("Mac") ? "Cmd" : "Ctrl";
 
-  const systemHotkeys = [];
-
-  const playerHotkeys = [];
-
   useEffect(() => {
-    const handleKeyboardEvent = (event: KeyboardEvent) => {
-      // Handle the keyboard event here
-      setHotkeys((prev) => [...prev, event]);
-    };
+    if (editing) {
+      const handleKeyboardEvent = (event: KeyboardEvent) => {
+        setHotKey((prev) => {
+          if (prev.length < 3) {
+            return [...prev, event];
+          }
+          return prev;
+        });
+      };
 
-    window.addEventListener("keydown", handleKeyboardEvent);
+      window.addEventListener("keydown", handleKeyboardEvent);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyboardEvent);
-    };
-  }, []);
+      return () => {
+        window.removeEventListener("keydown", handleKeyboardEvent);
+      };
+    }
+  }, [editing]);
 
   return (
     <>
       <div className="font-semibold mb-4 capitilized">{t("hotkeys")}</div>
-
       <div className="mb-6">
         <div className="text-sm text-muted-foreground">{t("system")}</div>
 
@@ -55,65 +57,24 @@ export const Hotkeys = () => {
         </div>
         <Separator />
       </div>
-
       <div className="mb-6">
         <div className="text-sm text-muted-foreground">{t("player")}</div>
 
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center space-x-2">{t("playOrPause")}</div>
-          <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground">
-            Space
-          </kbd>
-        </div>
+        {Object.entries(hotKeys).map((entry) => {
+          const [key, value] = entry;
+          return (
+            <>
+              <div className="flex items-center justify-between py-4" id={key}>
+                <div className="flex items-center space-x-2">{t(key)}</div>
+                <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground">
+                  {value}
+                </kbd>
+              </div>
 
-        <Separator />
-
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center space-x-2 capitalize">
-            {t("startOrStopRecording")}
-          </div>
-          <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground">
-            r
-          </kbd>
-        </div>
-
-        <Separator />
-
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center space-x-2">
-            {t("playOrPauseRecording")}
-          </div>
-          <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground">
-            {commandOrCtrl} + r
-          </kbd>
-        </div>
-
-        <Separator />
-
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center space-x-2 capitalize">
-            {t("playPreviousSegment")}
-          </div>
-          <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground">
-            p
-          </kbd>
-        </div>
-
-        <Separator />
-
-        <div
-          className="flex items-center justify-between py-4"
-          onDoubleClick={() => console.log(123)}
-        >
-          <div className="flex items-center space-x-2 capitalize">
-            {t("playNextSegment")}
-          </div>
-          <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground">
-            n
-          </kbd>
-        </div>
-
-        <Separator />
+              <Separator />
+            </>
+          );
+        })}
 
         <div
           className="flex items-center justify-between py-4"
@@ -127,7 +88,7 @@ export const Hotkeys = () => {
           {(editing && (
             <>
               <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground mr-4">
-                {(hotkeys && hotkeys.map((key) => key.key).join(" + ")) ||
+                {(hotKey && hotKey.map((key) => key.key).join(" + ")) ||
                   "Press keys to set hotkey"}
               </kbd>
               <div className="flex items-center space-x-2 justify-end">
@@ -135,6 +96,7 @@ export const Hotkeys = () => {
                   variant="secondary"
                   onClick={(e) => {
                     setEditing(!editing);
+                    setHotKey([]);
                     e.preventDefault();
                   }}
                   size="sm"
@@ -152,7 +114,7 @@ export const Hotkeys = () => {
             </>
           )) || (
             <kbd className="bg-muted px-2 py-1 rounded-md text-sm text-muted-foreground mr-4">
-              {hotkeys.map((key) => key.key).join(" + ")}
+              {hotKey.map((key) => key.key).join(" + ")}
             </kbd>
           )}
         </div>
@@ -163,14 +125,21 @@ export const Hotkeys = () => {
           size="sm"
           onClick={() => {
             console.log("aaa");
-            setHotkeys([]);
+            // console.log(hotKey.length);
+            // console.log(hotKey);
+            setHotKey([]);
           }}
         >
-          aaa
+          test
         </Button>
       </div>
     </>
   );
 };
 
-// add a button, set hotkeys to settings, need enjoy.setting.setHotKeys
+// add a button, set hotkeys to settings, need enjoy.setting.setHotKey
+// EnjoyApp.settings.setHotKey({
+//   name: "PlayOrPause1",
+//   key: "Space1",
+// });
+// }}

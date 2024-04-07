@@ -3,7 +3,7 @@ import { Button, ScrollArea, Separator } from "@renderer/components/ui";
 import {
   About,
   DefaultEngineSettings,
-  Hotkeys,
+  HotKeySettings,
   UserSettings,
   BalanceSettings,
   LanguageSettings,
@@ -78,7 +78,7 @@ export const Preferences = () => {
     {
       value: "hotkeys",
       label: t("hotkeys"),
-      component: () => <Hotkeys />,
+      component: () => <HotKeySettings />,
     },
     {
       value: "about",
